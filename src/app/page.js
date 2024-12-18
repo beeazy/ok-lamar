@@ -43,7 +43,7 @@ export default function Home() {
 
       const endDrag = () => {
         isDragging = false;
-        folder.style.zIndex = ''; // Reset z-index
+        // folder.style.zIndex = ''; // Reset z-index
         folder.classList.remove('dragging'); // Remove dragging class
       };
 
@@ -109,7 +109,7 @@ export default function Home() {
           <span className="text-base lowercase">thoughts</span>
         </div>
 
-        <div className="absolute top-[45%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-[45%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-0">
           <img
             src="https://via.placeholder.com/120/cccccc?text=Image"
             alt="Center Image"
