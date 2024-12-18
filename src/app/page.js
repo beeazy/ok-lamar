@@ -7,24 +7,34 @@ export default function Home() {
     const folders = document.querySelectorAll('.folder');
 
     folders.forEach((folder) => {
-      let offsetX = 0, offsetY = 0, isDragging = false;
+      let offsetX = 0,
+        offsetY = 0,
+        isDragging = false;
 
       const startDrag = (e) => {
         isDragging = true;
         folder.style.position = 'absolute'; // Ensure position is absolute
         folder.style.zIndex = 1000; // Bring folder to the front
-        offsetX = e.clientX - folder.getBoundingClientRect().left;
-        offsetY = e.clientY - folder.getBoundingClientRect().top;
 
-        // Add a class for visual feedback while dragging
-        folder.classList.add('dragging');
+        // Determine whether the event is a touch or mouse event
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        offsetX = clientX - folder.getBoundingClientRect().left;
+        offsetY = clientY - folder.getBoundingClientRect().top;
+
+        folder.classList.add('dragging'); // Add dragging class for visual feedback
       };
 
       const onDrag = (e) => {
         if (!isDragging) return;
 
-        const left = e.clientX - offsetX;
-        const top = e.clientY - offsetY;
+        // Determine whether the event is a touch or mouse event
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const left = clientX - offsetX;
+        const top = clientY - offsetY;
 
         // Update position dynamically
         folder.style.left = `${Math.max(0, left)}px`; // Prevent dragging off-screen to the left
@@ -34,19 +44,28 @@ export default function Home() {
       const endDrag = () => {
         isDragging = false;
         folder.style.zIndex = ''; // Reset z-index
-        folder.classList.remove('dragging');
+        folder.classList.remove('dragging'); // Remove dragging class
       };
 
-      // Event listeners
+      // Mouse events
       folder.addEventListener('mousedown', startDrag);
       document.addEventListener('mousemove', onDrag);
       document.addEventListener('mouseup', endDrag);
+
+      // Touch events
+      folder.addEventListener('touchstart', startDrag, { passive: false });
+      document.addEventListener('touchmove', onDrag, { passive: false });
+      document.addEventListener('touchend', endDrag);
 
       // Cleanup event listeners on unmount
       return () => {
         folder.removeEventListener('mousedown', startDrag);
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', endDrag);
+
+        folder.removeEventListener('touchstart', startDrag);
+        document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('touchend', endDrag);
       };
     });
   }, []);
